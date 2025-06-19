@@ -1,0 +1,2225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Frontend Battle - Animated Homepage</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        
+        :root {
+            --dark-bg: #121212;
+            --card-bg: #1e1e1e;
+            --item-bg: #262626;
+            --text-color: #ffffff;
+            --light-bg: #f5f2f0;
+            --maroon: #8c4a4a;
+            --maroon-light: #c1918c;
+            --accent-purple: #7b5cff;
+            --green-dot: #00d18d;
+            --yellow-dot: #ffbb00;
+            --red-dot: #ff3b3b;
+            --border-color: #333333;
+            --text-secondary: #888888;
+            --primary-button-bg: #ff3b3b;
+            --primary-button-hover: #cc2929;
+            --secondary-button-bg: transparent;
+            --secondary-button-border: white;
+            --secondary-button-text: white;
+
+            /* Additional variables for hero section from previous design */
+            --hero-video-filter: brightness(0.4);
+            --hero-overlay-bg: rgba(0, 0, 0, 0.3);
+            --panel-bg-dark: rgba(30, 30, 30, 0.7);
+            --panel-border-dark: rgba(50, 50, 50, 0.7);
+            --rating-stars: #ffc107;
+
+            /* Navbar colors */
+            --navbar-bg: rgba(18, 18, 18, 0.8);
+            --navbar-text: #ffffff;
+            --navbar-link-hover: var(--accent-purple);
+
+            /* Carousel background */
+            --carousel-bg-dark: linear-gradient(135deg, #1e1e1e, #262626);
+        }
+        [data-theme="light"] {
+            --dark-bg: #ffffff; /* Brighter background for light mode */
+            --card-bg: #f8f9fa; /* Lighter card background */
+            --item-bg: #e9ecef; /* Even lighter item background */
+            --text-color: #212529; /* Darker text for better contrast */
+            --border-color: #ced4da; /* Lighter border */
+            --text-secondary: #6c757d; /* Slightly darker secondary text */
+            --primary-button-bg: #4c6ef5; /* A more vibrant blue for light theme primary */
+            --primary-button-hover: #364fc7;
+            --secondary-button-border: #4c6ef5;
+            --secondary-button-text: #4c6ef5;
+
+
+            /* Additional variables for hero section in light mode */
+            --hero-video-filter: brightness(0.6); /* Slightly less dark for light theme */
+            --hero-overlay-bg: rgba(255, 255, 255, 0.5);
+            --panel-bg-light: rgba(255, 255, 255, 0.8);
+            --panel-border-light: rgba(173, 181, 189, 0.7); /* Greyish border */
+
+            /* Navbar colors in light mode */
+            --navbar-bg: rgba(255, 255, 255, 0.9);
+            --navbar-text: #212529;
+            --navbar-link-hover: var(--primary-button-bg);
+
+            /* Carousel background in light mode */
+            --carousel-bg-light: linear-gradient(135deg, #e0efff, #ccf0ff); /* Light blue gradient */
+            --carousel-text-light: #212529; /* Dark text for light gradient */
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark-bg); /* Base background color */
+            /* Subtle grid pattern for dark mode */
+            background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            
+            color: var(--text-color);
+            transition: background 0.3s ease, color 0.3s ease;
+            overflow-x: hidden; /* Prevent horizontal scroll from animations */
+        }
+
+        [data-theme="light"] body {
+            background-color: var(--dark-bg); /* This is the light mode --dark-bg which is white */
+            /* Subtle grid pattern for light mode */
+            background-image: linear-gradient(rgb(163, 3, 158) 1px, transparent 1px),
+                             
+            
+        }
+
+        /* Loader */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--dark-bg); /* Use theme background */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+            gap: 10px; /* Space between bars */
+        }
+
+        .loader-bar {
+            width: 40px;
+            height: 10px;
+            background: var(--accent-purple); /* Use accent color */
+            border-radius: 5px;
+            animation: loaderDance 1.5s infinite ease-in-out;
+        }
+
+        .loader-bar:nth-child(2) {
+            background: var(--maroon-light); /* Another accent color */
+            animation-delay: 0.3s;
+        }
+
+        @keyframes loaderDance {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        /* General layout for the main container */
+        .homepage-bg-ripple {
+            min-height: 100vh;
+            position: relative;
+            overflow: hidden;
+            padding: 0; /* Remove overall padding to allow sections to stretch */
+            transition: background 0.4s;
+            display: flex;
+            flex-direction: column;
+            /* Gap between sections will be handled by section padding/margins */
+        }
+
+        /* Background Ripple Effect for the entire page container */
+        .bg-ripple {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            transform: scale(0);
+            opacity: 0.7;
+            animation: bg-ripple-anim 0.8s cubic-bezier(.77,0,.18,1) forwards;
+            background: radial-gradient(circle, var(--accent-purple) 0%, transparent 80%);
+            z-index: 0;
+        }
+        @keyframes bg-ripple-anim {
+            to { transform: scale(6); opacity: 0; }
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 75px; /* Adjusted from 20px to prevent overlap with navbar */
+            right: 20px;
+            z-index: 100;
+            background: var(--card-bg);
+            border-radius: 50px;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            color: var(--text-color); /* Ensure icon color changes with theme */
+            transition: top 0.3s ease, background 0.3s ease, color 0.3s ease; /* Add transition for 'top' */
+        }
+        .toggle-switch {
+            width: 44px;
+            height: 24px;
+            background: var(--border-color); /* Use border color for switch track */
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        [data-theme="light"] .toggle-switch {
+            background: #ccc; /* Lighter track for light theme */
+        }
+        .toggle-circle {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: var(--text-color); /* Circle color changes with theme */
+            border-radius: 50%;
+            transition: left 0.3s, background 0.3s;
+        }
+        .toggle-switch[data-on="true"] .toggle-circle { left: 22px; }
+
+        /* Navigation Bar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: var(--navbar-bg);
+            backdrop-filter: blur(8px);
+            z-index: 90; /* Below loader, above hero content when scrolling */
+            padding: 15px 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        .navbar-logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--navbar-text);
+            text-decoration: none;
+        }
+        .navbar-links {
+            display: flex;
+            gap: 30px;
+        }
+        .navbar-links a {
+            color: var(--navbar-text);
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+        .navbar-links a:hover {
+            color: var(--navbar-link-hover);
+        }
+        .menu-toggle {
+            display: none; /* Hidden on desktop */
+            font-size: 1.8rem;
+            color: var(--navbar-text);
+            cursor: pointer;
+        }
+        /* Mobile Navbar Menu */
+        .navbar-links.active {
+            display: flex;
+            flex-direction: column;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            background: var(--navbar-bg);
+            padding: 20px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            border-top: 1px solid var(--border-color);
+            gap: 15px;
+            animation: slideDown 0.3s ease-out forwards;
+        }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Hero Section (Homepage) */
+        #homepage-hero {
+            position: relative;
+            width: 100%;
+            height: 100vh; /* Full viewport height */
+            display: flex;
+            flex-direction: column; /* Stack content and panels */
+            align-items: center;
+            justify-content: center;
+            color: white; /* Hero text remains white for contrast with video */
+            text-align: center;
+            overflow: hidden;
+            padding-top: 100px; /* Adjusted for navbar height */
+            border-radius: 0 0 40px 40px;
+            box-shadow: 0 8px 24px rgba(123, 92, 255, 0.4);
+            /* Adjust margins to span full width and height within homepage-bg-ripple */
+            margin: 0;
+            padding-left: 2rem; /* Re-add padding to content inside */
+            padding-right: 2rem;
+            z-index: 2;
+        }
+
+        /* Video Background */
+        .hero-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2; /* Ensure video is behind everything */
+            filter: var(--hero-video-filter);
+        }
+
+        /* Overlay for text readability */
+        #homepage-hero::before { /* Apply overlay to the hero section */
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--hero-overlay-bg);
+            z-index: -1; /* Between video and content */
+        }
+
+        .hero-content {
+            position: relative; /* Establish stacking context for its children */
+            z-index: 10; /* Ensure hero content is always on top */
+            max-width: 900px;
+            padding: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%; /* Take full width of parent to help centering */
+        }
+        .hero-content h1 {
+            font-size: 3.8rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            line-height: 1.1;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            color: white; /* Default for dark mode */
+        }
+        /* New rule for h1 in light mode */
+        [data-theme="light"] .hero-content h1 {
+            color: var(--text-color); /* Darker text for light mode */
+            text-shadow: none; /* Remove text shadow in light mode */
+        }
+
+        .hero-content p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            text-shadow: 0 1px 6px rgba(0,0,0,0.2);
+        }
+
+        .ratings {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        .rating-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .stars {
+            color: var(--rating-stars);
+            font-size: 1.1rem;
+        }
+        .ai-insights {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+        .hero-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        /* Ripple button (used for primary/secondary actions) */
+        .ripple-button {
+            background: var(--primary-button-bg);
+            border: none;
+            padding: 1rem 2.5rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(255, 59, 59, 0.6);
+            color: white;
+            transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0; /* Prevent shrinking on small screens */
+        }
+        .ripple-button:hover {
+            background: var(--primary-button-hover);
+            box-shadow: 0 6px 18px rgba(255, 59, 59, 0.8);
+            transform: translateY(-2px);
+        }
+        .ripple-button.secondary {
+            background: var(--secondary-button-bg) !important; /* Override inline style */
+            border: 2px solid var(--secondary-button-border) !important;
+            color: var(--secondary-button-text) !important;
+            box-shadow: none !important;
+        }
+        .ripple-button.secondary:hover {
+            background: rgba(255,255,255,0.2) !important; /* Subtle hover for secondary */
+            border-color: var(--primary-button-bg) !important;
+            color: var(--primary-button-bg) !important;
+            transform: translateY(-2px);
+        }
+        [data-theme="light"] .ripple-button.secondary:hover {
+            background: rgba(76,110,245,0.1) !important; /* Light mode secondary hover */
+            border-color: var(--primary-button-hover) !important;
+            color: var(--primary-button-hover) !important;
+        }
+
+
+        /* Dynamic Panels for Homepage */
+        .dynamic-panels {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none; /* Allow interaction with hero content by default */
+            z-index: 5; /* Panels are behind hero content but above video/overlay */
+        }
+        .panel {
+            position: absolute;
+            background-color: var(--panel-bg-dark); /* Use dark theme panel bg by default */
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--panel-border-dark); /* Use dark theme panel border by default */
+            border-radius: 15px;
+            padding: 20px;
+            text-align: left;
+            color: white; /* Panels always have white text */
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            opacity: 0; /* Hidden by default for animation */
+            transform: translateY(20px) scale(0.95);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+            pointer-events: none; /* Panels don't respond to events until active */
+            will-change: transform, opacity; /* Hint for browser optimization */
+        }
+
+        /* Light theme panel styles */
+        [data-theme="light"] .panel {
+            background-color: var(--panel-bg-light);
+            border: 1px solid var(--panel-border-light);
+            color: var(--text-color); /* Text color from light theme */
+        }
+
+
+        /* NEW: Class to show panels on hover over #homepage-hero */
+        #homepage-hero.panels-active .panel {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto; /* Enable interaction when visible */
+        }
+
+        /* Adjust panel transition delays for staggered effect when active */
+        #homepage-hero.panels-active .panel:nth-child(1) { transition-delay: 0s; }
+        #homepage-hero.panels-active .panel:nth-child(2) { transition-delay: 0.1s; }
+        #homepage-hero.panels-active .panel:nth-child(3) { transition-delay: 0.2s; }
+        #homepage-hero.panels-active .panel:nth-child(4) { transition-delay: 0.3s; }
+        #homepage-hero.panels-active .panel:nth-child(5) { transition-delay: 0.4s; }
+        #homepage-hero.panels-active .panel:nth-child(6) { transition-delay: 0.5s; }
+        #homepage-hero.panels-active .panel:nth-child(7) { transition-delay: 0.6s; }
+        #homepage-hero.panels-active .panel:nth-child(8) { transition-delay: 0.7s; }
+        #homepage-hero.panels-active .panel:nth-child(9) { transition-delay: 0.8s; }
+        #homepage-hero.panels-active .panel:nth-child(10) { transition-delay: 0.9s; }
+        #homepage-hero.panels-active .panel:nth-child(11) { transition-delay: 1.0s; }
+
+
+        /* Specific Panel Positioning and Styling (Adjust as needed for layout) */
+        .expenses-panel { top: 55%; left: 10%; width: 250px; }
+        .chart-circle {
+            width: 100px; height: 100px; border-radius: 50%;
+            background: conic-gradient(orange 0% 30%, red 30% 60%, green 60% 80%, grey 80% 100%);
+            margin: 15px 0;
+        }
+        .expense-list { list-style: none; font-size: 0.9rem; }
+        .expense-list li { padding: 3px 0; }
+
+        .total-income-panel { top: 40%; right: 15%; width: 300px; }
+        .income-increase { color: var(--green-dot); font-size: 0.9rem; font-weight: 600; }
+        .bar-chart {
+            background-color: rgba(255, 255, 255, 0.2); height: 80px; border-radius: 5px; margin-top: 15px;
+        }
+
+        .cash-panel { top: 65%; right: 5%; width: 220px; }
+        .cash-increase { color: var(--green-dot); font-size: 0.9rem; font-weight: 600; }
+        .sub-value { font-size: 1.1rem; opacity: 0.8; }
+
+        .business-report-panel { top: 15%; left: 15%; width: 280px; }
+        .org-logo, .entity-logo {
+            margin-top: 15px; font-weight: 700;
+            background: rgba(255, 255, 255, 0.1); padding: 8px; border-radius: 5px; display: inline-block;
+        }
+
+        .send-to-panel { top: 20%; right: 5%; width: 250px; }
+        .send-to-panel ul { list-style: none; }
+        .send-to-panel li {
+            display: flex; align-items: center; gap: 10px; padding: 8px 0; font-size: 0.95rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .send-to-panel li:last-child { border-bottom: none; }
+        .send-to-panel li img { filter: invert(1); /* Ensure icons are white */ }
+        [data-theme="light"] .send-to-panel li img { filter: none; /* Show original icons in light mode */ }
+
+
+        .invoices-panel { top: 45%; left: 35%; width: 280px; }
+        .invoice-list { margin-top: 10px; font-size: 0.9rem; }
+        .invoice-item { margin-bottom: 5px; }
+
+        .cash-flow-panel { bottom: 10%; left: 20%; width: 200px; }
+        .overdue-value { color: var(--red-dot); font-size: 1.5rem; margin-top: 10px; }
+
+        .financial-score-panel { bottom: 5%; right: 25%; width: 250px; text-align: center; }
+        .financial-score { font-size: 1.3rem; font-weight: 600; }
+
+        .integrations-panel { top: 10%; left: 45%; width: 300px; }
+        .integration-logos {
+            display: flex; justify-content: space-around; align-items: center; margin-top: 15px;
+        }
+        .integration-logo {
+            height: 40px; /* Adjust as needed */
+            filter: brightness(0) invert(1); /* Make logos white for dark background */
+        }
+        [data-theme="light"] .integration-logo {
+            filter: none; /* Show original colors in light mode */
+        }
+
+        .branch-panel button {
+            background-color: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background-color 0.2s, transform 0.2s, box-shadow 0.2s;
+        }
+        [data-theme="light"] .branch-panel button {
+            background-color: rgba(0, 0, 0, 0.1);
+            border-color: rgba(0, 0, 0, 0.2);
+            color: var(--text-color);
+        }
+        .branch-panel button:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        [data-theme="light"] .branch-panel button:hover {
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+
+        /* General h2 styling (for sections) */
+        section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+            color: var(--text-color); /* This will adapt to light/dark mode */
+            transition: color 0.3s ease;
+        }
+
+        /* Customer Section */
+        .customer-section {
+            background-color: var(--card-bg); /* Use card background for consistency */
+            padding: 80px 2rem;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 40vh;
+            border-radius: 20px; /* Match other sections */
+            margin: 3rem auto; /* Center with auto margins */
+            max-width: 1200px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+        }
+        .customer-logo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 40px;
+            margin-bottom: 50px;
+            max-width: 900px;
+            width: 100%;
+        }
+        .customer-logo {
+            max-width: 150px;
+            height: auto;
+            filter: brightness(0) invert(1); /* Default to white for dark theme */
+            opacity: 0.7;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        [data-theme="light"] .customer-logo {
+            filter: none; /* Show original colors in light theme */
+        }
+        .customer-logo:hover { opacity: 1; transform: scale(1.05); }
+
+        /* Features/Services Section */
+        .features-services-section {
+            padding: 80px 2rem;
+            background-color: var(--card-bg);
+            text-align: center;
+            border-radius: 20px;
+            margin: 3rem auto;
+            max-width: 1200px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+        }
+        .features-services-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 50px;
+            color: var(--text-color);
+        }
+        .features-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+        .tab-button {
+            background-color: var(--item-bg); /* Use item-bg for tab background */
+            color: var(--text-color);
+            padding: 10px 20px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+        }
+        .tab-button.active {
+            background-color: var(--accent-purple); /* Active color from your palette */
+            color: white;
+        }
+        .tab-button:hover:not(.active) {
+            background-color: var(--border-color);
+            transform: translateY(-2px);
+        }
+        .tab-content {
+            display: none;
+            text-align: left;
+            background-color: var(--item-bg); /* Use item-bg for content area */
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            align-items: center;
+            justify-content: space-around;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInSlideUp 0.5s forwards;
+        }
+        .tab-content.active { display: flex; }
+        @keyframes fadeInSlideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .tab-content .content-left { flex: 1; min-width: 300px; max-width: 500px; }
+        .tab-content .content-left h3 {
+            font-size: 2rem;
+            color: var(--accent-purple); /* Use accent color for sub-heading */
+            margin-bottom: 20px;
+        }
+        .tab-content .content-left p { font-size: 1.1rem; line-height: 1.6; }
+        .tab-content .content-right {
+            flex: 1; min-width: 300px; max-width: 500px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .tab-content .content-right img {
+            max-width: 100%; height: auto; border-radius: 10px; margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .billing-stats, .product-item {
+            display: flex; justify-content: space-around; width: 100%; gap: 20px; flex-wrap: wrap; text-align: center;
+        }
+        .stat-item {
+            background-color: var(--dark-bg); /* Use dark-bg for nested cards/items */
+            padding: 15px; border-radius: 10px; flex: 1; min-width: 120px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        [data-theme="light"] .stat-item { background-color: var(--light-bg); }
+
+        .stat-item p:first-child { font-size: 0.9rem; opacity: 0.8; }
+        .stat-item .stat-value {
+            font-size: 1.5rem; font-weight: 700; color: var(--accent-purple); margin-top: 5px;
+        }
+        .price-display {
+            font-size: 2.5rem; font-weight: 700; color: var(--accent-purple); margin-bottom: 20px;
+        }
+        .price-display sub { font-size: 0.8em; vertical-align: sub; }
+        .phone-call-mockup {
+            background-color: var(--dark-bg);
+            padding: 20px; border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1); text-align: center;
+        }
+        [data-theme="light"] .phone-call-mockup { background-color: var(--light-bg); }
+        .phone-call-mockup p { margin: 5px 0; font-size: 1.1rem; }
+        .product-item {
+            background-color: var(--dark-bg);
+            padding: 20px; border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            display: flex; flex-direction: column; align-items: center; text-align: center;
+        }
+        [data-theme="light"] .product-item { background-color: var(--light-bg); }
+        .product-item img {
+            height: 50px; margin-bottom: 10px; filter: invert(1); /* Default to white for dark theme */
+            box-shadow: none;
+        }
+        [data-theme="light"] .product-item img { filter: none; }
+        .product-item h4 { font-size: 1.3rem; margin-bottom: 5px; }
+        .feature-nav-buttons {
+            margin-top: 50px; display: flex; justify-content: center; flex-wrap: wrap; gap: 15px;
+        }
+        .feature-nav-buttons button {
+            background-color: var(--item-bg);
+            color: var(--text-color);
+            padding: 10px 20px;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .feature-nav-buttons button:hover {
+            background-color: var(--border-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .feature-nav-buttons button.ripple-button { /* Target the primary button */
+            background-color: var(--primary-button-bg);
+            color: white;
+        }
+        .feature-nav-buttons button.ripple-button:hover {
+            background-color: var(--primary-button-hover);
+            transform: translateY(-2px);
+        }
+
+
+        /* Carousel Section */
+        .carousel-section {
+            padding: 80px 2rem;
+            background-color: var(--card-bg); /* Fallback */
+            background-image: var(--carousel-bg-dark); /* Subtle gradient for dark theme */
+            text-align: center;
+            border-radius: 20px;
+            margin: 3rem auto;
+            max-width: 1200px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+            overflow: hidden; /* For the carousel items */
+            transition: background-image 0.3s ease, background-color 0.3s ease;
+        }
+        [data-theme="light"] .carousel-section {
+            background-image: var(--carousel-bg-light);
+            color: var(--carousel-text-light); /* Ensures headings in this section are dark */
+        }
+
+        .carousel-section h2 {
+            color: inherit; /* Ensure heading inherits from carousel-section's color */
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+        }
+        .carousel-container {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+            justify-content: center; /* Center items if few */
+            align-items: center;
+        }
+        .carousel-item {
+            min-width: 45%; /* Show two items side-by-side on desktop */
+            flex-shrink: 0;
+            padding: 20px;
+            text-align: center;
+            background-color: var(--item-bg);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin: 0 10px; /* Space between items */
+            position: relative;
+            transition: transform 0.3s ease, box-shadow 0.3s ease; /* Added transition */
+        }
+        [data-theme="light"] .carousel-item {
+            background-color: var(--dark-bg); /* Use the overall light theme background for items to pop */
+            color: var(--text-color); /* Ensure text in items is dark */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15); /* Stronger shadow */
+        }
+        .carousel-item:hover { /* Added hover animation for carousel items */
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        .carousel-item img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .carousel-item .add-to-bag {
+            background-color: var(--accent-purple);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .carousel-item .add-to-bag:hover {
+            background-color: #6a4ce0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(123, 92, 255, 0.4);
+        }
+        .carousel-nav {
+            margin-top: 30px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        .carousel-nav button {
+            background: var(--item-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 10px 15px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: background 0.3s, color 0.3s, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .carousel-nav button:hover {
+            background: var(--accent-purple);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(123, 92, 255, 0.4);
+        }
+
+
+        /* Brand Kits Card (Your original CSS) */
+        .brand-kits-card {
+            max-width: 450px;
+            margin: 2rem auto;
+            background: var(--card-bg);
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+            padding: 0; /* Remove internal padding, handled by content div */
+        }
+        .brand-kits-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-radius: 20px;
+            padding: 2px;
+            background: linear-gradient(90deg, #ff00cc, #3333ff, #00ccff);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            z-index: -1;
+        }
+        .brand-kits-content { padding: 2rem; }
+        .brand-kits-title {
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--text-color);
+        }
+        .brand-kit-list { display: flex; flex-direction: column; gap: 0.75rem; }
+        .brand-kit {
+            background: var(--item-bg);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: box-shadow 0.2s, transform 0.2s;
+        }
+        .brand-kit.selected { box-shadow: 0 0 0 2px var(--accent-purple); }
+        .brand-kit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .checkbox {
+            width: 24px; height: 24px; border-radius: 8px;
+            background: var(--border-color); /* Use border color for checkbox background */
+            margin-right: 1rem;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .brand-kit.selected .checkbox { background: var(--accent-purple); }
+        .checkmark { display: none; color: white; font-size: 16px; }
+        .brand-kit.selected .checkmark { display: block; }
+        .color-dots { display: flex; align-items: center; gap: 4px; margin-right: 10px; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
+        .dot.green { background: var(--green-dot); }
+        .dot.yellow { background: var(--yellow-dot); }
+        .dot.purple { background: var(--accent-purple); }
+        .dot.red { background: var(--red-dot); }
+        .dot.white { background: white; }
+        .brand-name { flex: 1; font-weight: 500; font-size: 1.1rem; }
+        .settings-icon { color: var(--text-secondary); font-size: 1.2rem; }
+
+        /* Carbon Emissions Chart (Your original CSS) */
+        .chart-section {
+            max-width: 1200px;
+            margin: 3rem auto;
+            background: var(--light-bg);
+            border-radius: 8px;
+            padding: 2rem;
+            color: var(--text-color); /* Use theme text color */
+            box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+        }
+        [data-theme="light"] .chart-section {
+            color: #333; /* Specific color for light theme chart text */
+        }
+        [data-theme="dark"] .chart-section {
+            background: var(--card-bg); /* Use card-bg for dark theme chart background */
+            color: var(--text-color);
+        }
+
+        .filter-section {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+        .filter-group { display: flex; flex-direction: column; gap: 0.5rem; }
+        .filter-label { font-size: 1rem; font-weight: 500; margin-bottom: 0.5rem; }
+        .filter-options { display: flex; gap: 0.75rem; }
+        .filter-btn {
+            background: transparent;
+            border: 1px solid var(--maroon);
+            border-radius: 50px;
+            padding: 0.5rem 1.5rem;
+            color: var(--maroon);
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .filter-btn.active { background: var(--maroon); color: white; border-color: var(--maroon); }
+        .filter-btn:hover:not(.active) {
+            background: rgba(var(--maroon-light), 0.2); /* Lighter hover background */
+            color: var(--maroon);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        [data-theme="dark"] .filter-btn:hover:not(.active) {
+            background: rgba(255,255,255,0.1); /* Even lighter for dark theme */
+            color: var(--text-color); /* Adjust color for dark theme hover */
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+        }
+        .chart-keys { flex: 1; }
+        .chart-title {
+            text-align: right;
+            font-size: 2.5rem;
+            font-weight: 700;
+            line-height: 1.1;
+            color: var(--maroon);
+            max-width: 500px;
+            margin-left: auto;
+        }
+        .chart-subtitle {
+            text-align: right;
+            font-size: 1rem;
+            margin-top: 1rem;
+            color: var(--text-secondary);
+        }
+        .key-item {
+            display: flex; align-items: center; gap: 0.5rem;
+            margin-bottom: 0.5rem; font-size: 0.9rem; color: var(--text-secondary);
+        }
+        .key-line { display: inline-block; width: 50px; height: 2px; }
+        .key-line.dashed { border-top: 2px dashed var(--maroon); }
+        .key-line.solid { border-top: 2px solid var(--maroon); }
+        .chart-container {
+            height: 400px; position: relative; margin-top: 2rem;
+        }
+        .y-axis {
+            position: absolute; left: 0; top: 0; bottom: 0; width: 60px;
+            display: flex; flex-direction: column; justify-content: space-between; padding: 10px 0;
+            color: var(--text-secondary);
+        }
+        .y-axis-label { font-size: 0.8rem; }
+        .chart-grid {
+            position: absolute; left: 60px; right: 0; top: 0; bottom: 0;
+            display: flex; align-items: flex-end;
+        }
+        .chart-bar {
+            flex: 1; background: var(--maroon); margin: 0 5px; position: relative; min-width: 20px;
+            border-radius: 4px 4px 0 0;
+            transition: height 0.8s cubic-bezier(.77,0,.18,1);
+            display: flex; align-items: flex-end; justify-content: center;
+        }
+        .bar-value {
+            position: absolute; top: -20px; left: 0; right: 0; text-align: center;
+            font-size: 0.8rem; color: var(--text-secondary);
+        }
+        .download-btn {
+            display: flex; align-items: center; gap: 0.5rem;
+            background: transparent;
+            border: 1px solid var(--maroon);
+            border-radius: 50px;
+            padding: 0.5rem 1rem;
+            color: var(--maroon);
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-left: auto;
+            margin-top: 1rem;
+            transition: background 0.2s, color 0.2s, border-color 0.2s, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .download-btn:hover {
+            background: var(--maroon);
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        /* Stats Section (Your original CSS) */
+        .stats-section {
+            max-width: 1200px;
+            margin: 3rem auto;
+            background: var(--light-bg);
+            border-radius: 8px;
+            padding: 2rem;
+            color: var(--text-color); /* Use theme text color */
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+        }
+        [data-theme="light"] .stats-section {
+            color: #333;
+        }
+        [data-theme="dark"] .stats-section {
+            background: var(--card-bg);
+            color: var(--text-color);
+        }
+        .stat-column { display: flex; flex-direction: column; }
+        .stat-header { font-size: 1.1rem; font-weight: 500; margin-bottom: 0.5rem; color: var(--text-color); }
+        [data-theme="light"] .stat-header { color: #333; }
+        .stat-unit { font-size: 0.9rem; color: var(--text-secondary); text-align: right; }
+        .stat-value { font-size: 3rem; font-weight: 700; margin: 0.5rem 0; color: var(--text-color); }
+        [data-theme="light"] .stat-value { color: #333; }
+
+        .stat-change { display: flex; align-items: center; gap: 0.25rem; font-size: 1rem; margin-bottom: 1rem; }
+        .stat-change.increase { color: var(--red-dot); }
+        .stat-change.decrease { color: var(--green-dot); }
+        .stat-change span:last-child { color: var(--text-secondary) !important; } /* Important to override previous rules */
+
+        .year-progress { display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem; }
+        .year-row { display: flex; align-items: center; gap: 1rem; }
+        .year-label { width: 40px; font-size: 0.9rem; color: var(--text-secondary); }
+        .progress-container { flex: 1; height: 10px; background: var(--border-color); border-radius: 5px; }
+        [data-theme="light"] .progress-container { background: #e5d5d5; }
+        .progress-bar { height: 100%; background: var(--maroon); border-radius: 5px; }
+        .year-value { width: 70px; font-size: 0.9rem; color: var(--text-secondary); text-align: right; }
+        .stat-footer { margin-top: auto; display: flex; justify-content: flex-end; }
+
+
+        /* Parallax Section (from parallax animation.mp4) */
+        .parallax-section {
+            position: relative;
+            height: 80vh; /* Shorter than hero, but still prominent */
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin: 3rem auto;
+            max-width: 1200px;
+            border-radius: 20px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+        }
+        .parallax-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://via.placeholder.com/1920x1080/4a90e2/ffffff?text=Parallax+Image'); /* Placeholder for a suitable image */
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed; /* Key for parallax */
+            filter: brightness(0.6);
+            z-index: -1;
+        }
+        .parallax-content {
+            position: relative;
+            z-index: 1;
+            padding: 20px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.6);
+        }
+        .connection-heading {
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin-bottom: 10px;
+            opacity: 0.8;
+        }
+        .share-text {
+            font-size: 4rem;
+            font-weight: 700;
+            line-height: 1.2;
+            color: white; /* Default for dark mode */
+            transition: color 0.3s ease;
+        }
+        [data-theme="light"] .share-text {
+            color: var(--text-color); /* Darker text for light mode */
+        }
+        .engaging-way-text {
+            position: relative; /* Make it relative to normal flow */
+            bottom: auto; /* Remove fixed bottom */
+            left: auto;
+            transform: none; /* Remove translateX */
+            width: 90%;
+            max-width: 800px;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            color: #fff;
+            z-index: 2;
+            margin-top: 50px; /* Space from parallax-content */
+        }
+        [data-theme="light"] .engaging-way-text {
+            background-color: rgba(255, 255, 255, 0.8);
+            color: var(--text-color);
+        }
+
+        .engaging-way-text h3 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+        .engaging-way-text p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        /* Countdown Section */
+        .countdown-section {
+            padding: 80px 2rem;
+            background-color: var(--card-bg);
+            text-align: center;
+            border-radius: 20px;
+            margin: 3rem auto;
+            max-width: 1200px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+            color: var(--text-color);
+        }
+        .countdown-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+        }
+        .countdown-timer {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .countdown-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: var(--item-bg);
+            padding: 20px 30px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .countdown-value {
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--accent-purple);
+            line-height: 1;
+        }
+        .countdown-label {
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            margin-top: 10px;
+            color: var(--text-secondary);
+        }
+
+        /* Contact Us Section */
+        .contact-us-section {
+            padding: 80px 2rem;
+            background-color: var(--card-bg);
+            text-align: center;
+            border-radius: 20px;
+            margin: 3rem auto;
+            max-width: 1200px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.2);
+            color: var(--text-color);
+        }
+        .contact-us-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+        }
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .contact-form input[type="text"],
+        .contact-form input[type="email"],
+        .contact-form textarea {
+            padding: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            background-color: var(--item-bg);
+            color: var(--text-color);
+            font-size: 1rem;
+            width: 100%;
+            transition: border-color 0.3s ease, background-color 0.3s ease;
+        }
+        .contact-form input[type="text"]:focus,
+        .contact-form input[type="email"]:focus,
+        .contact-form textarea:focus {
+            border-color: var(--accent-purple);
+            outline: none;
+        }
+        .contact-form textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        .contact-form button {
+            background-color: var(--primary-button-bg);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .contact-form button:hover {
+            background-color: var(--primary-button-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(255, 59, 59, 0.8);
+        }
+
+
+        /* Scroll Animation (Your original CSS) */
+        .scroll-animate {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        .scroll-animate.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .stats-section { grid-template-columns: 1fr; gap: 3rem; }
+            .expenses-panel { left: 5%; width: 280px; }
+            .total-income-panel { right: 5%; width: 320px; }
+            .business-report-panel { left: 5%; width: 300px; }
+            .send-to-panel { right: 5%; width: 280px; }
+            .invoices-panel { left: 25%; width: 300px; }
+
+            .carousel-item { min-width: 80%; } /* One item per row on smaller tablets */
+        }
+
+        @media (max-width: 768px) {
+            .chart-header { flex-direction: column; }
+            .chart-title { text-align: left; margin-left: 0; margin-top: 2rem; }
+            .chart-subtitle { text-align: left; }
+            .filter-section { flex-direction: column; gap: 1.5rem; }
+            .homepage-hero h1 { font-size: 2.2rem; }
+
+            /* Mobile-specific panel layout */
+            #homepage-hero {
+                height: auto; /* Allow height to adjust */
+                padding-bottom: 50px;
+                border-radius: 0; /* Remove border radius for full width on mobile */
+                padding-top: 80px; /* Adjust for mobile navbar */
+            }
+            #homepage-hero::before { /* Adjust overlay for mobile */
+                content: none; /* Remove static overlay, relying on video filter */
+            }
+            .hero-content {
+                padding-bottom: 40px; /* Add space below hero content on mobile */
+            }
+            .dynamic-panels {
+                position: relative; /* Allow panels to flow normally */
+                display: flex; /* Use flexbox for stacking */
+                flex-direction: column;
+                align-items: center;
+                height: auto; /* Adjust height based on content */
+                gap: 20px; /* Space between stacked panels */
+                padding: 0 10px; /* Horizontal padding */
+            }
+            .panel {
+                position: relative; /* Remove absolute positioning */
+                top: auto; left: auto; right: auto; bottom: auto;
+                opacity: 1; /* Always visible on mobile */
+                transform: translateY(0) scale(1); /* No animation on mobile */
+                pointer-events: auto; /* Always interactive */
+                width: 95%; /* Adjust width for mobile screens */
+                max-width: 350px; /* Ensure they don't get too wide */
+                margin: 0 auto; /* Center them */
+                transition-delay: 0s !important; /* No staggered delay on mobile */
+            }
+            #homepage-hero.panels-active .panel {
+                transition-delay: 0s !important; /* Override staggered delay for mobile */
+            }
+            .hero-buttons { flex-direction: column; }
+
+            .customer-logo-grid { grid-template-columns: 1fr; }
+            .features-tabs { flex-direction: column; }
+            .tab-button { width: 100%; }
+            .tab-content { flex-direction: column; }
+            .tab-content .content-left, .tab-content .content-right {
+                min-width: unset; width: 100%;
+            }
+            .stat-item { min-width: 100px; padding: 10px; }
+            .stat-item .stat-value { font-size: 1.2rem; }
+
+            .share-text { font-size: 3rem; }
+            .engaging-way-text h3 { font-size: 1.5rem; }
+            .engaging-way-text p { font-size: 1.1rem; }
+
+            .parallax-section { border-radius: 0; } /* Full width on mobile */
+
+            /* Mobile Navbar Adjustments */
+            .navbar-links { display: none; } /* Hide by default on mobile */
+            .menu-toggle { display: block; }
+            .navbar { padding: 10px 1rem; } /* Smaller padding for mobile */
+            .navbar-logo { font-size: 1.5rem; }
+
+            .countdown-value { font-size: 2rem; }
+            .countdown-item { padding: 15px 20px; }
+        }
+        body{
+            background-image: linear-gradient(to right bottom, rgb(149, 5, 164),rgb(41, 214, 249));
+            min-width: 100%;
+            min-height: 100px;
+        }
+
+        @media (max-width: 500px) {
+            .homepage-hero { padding: 4rem 1rem 2.5rem 1rem; }
+            .hero-content h1 { font-size: 1.8rem; }
+            .hero-content p { font-size: 1rem; }
+            .ripple-button { padding: 0.8rem 2rem; font-size: 1rem; }
+
+            .brand-kits-card { max-width: 98vw; }
+            .brand-kits-content { padding: 1rem; }
+            .stat-value { font-size: 2rem; }
+            .stats-section, .chart-section { padding: 1rem; }
+
+            .filter-options { flex-wrap: wrap; }
+            .filter-btn { padding: 0.4rem 1rem; font-size: 0.85rem; }
+            .chart-title { font-size: 2rem; }
+            .chart-subtitle { font-size: 0.9rem; }
+
+            .carousel-item { margin: 0 5px; } /* Smaller margin for mobile carousel */
+            .share-text { font-size: 2.5rem; }
+            .engaging-way-text { padding: 20px; }
+            .engaging-way-text h3 { font-size: 1.2rem; }
+            .engaging-way-text p { font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="loader" id="loader">
+        <div class="loader-bar"></div>
+        <div class="loader-bar"></div>
+    </div>
+
+    <div class="homepage-bg-ripple" id="homepage-bg">
+        <!-- Navigation Bar -->
+        <nav class="navbar">
+            <a href="#" class="navbar-logo">Frontend Battle</a>
+            <div class="menu-toggle" id="mobile-menu">☰</div>
+            <div class="navbar-links" id="navbar-links">
+                <a href="#homepage-hero">Home</a>
+                <a href="#customers">Customers</a>
+                <a href="#features">Features</a>
+                <a href="#carousel-section">Products</a>
+                <a href="#contact-us">Contact</a>
+            </div>
+        </nav>
+
+        <!-- Homepage Hero Section -->
+        <section id="homepage-hero" class="homepage-hero scroll-animate">
+            <video class="hero-video" autoplay loop muted playsinline>
+                <source src="homepage.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <div class="hero-content">
+                <div class="ratings">
+                    <div class="rating-item"><span class="stars">★★★★★</span> 4.8 rating on Capterra</div>
+                    <div class="rating-item"><span class="stars">★★★★★</span> 4.8 rating on G2</div>
+                    <div class="rating-item"><span class="stars">★★★★★</span> 350+ reviews on Xero</div>
+                    <div class="rating-item"><span class="stars">★★★★★</span> 550+ reviews on QuickBooks</div>
+                </div>
+                <h1>Create reports, forecasts, <br>dashboards & consolidations</h1>
+                <p class="ai-insights">Now with AI-insights ✨</p>
+                <div class="hero-buttons">
+                    <button class="ripple-button" id="start-trial-btn">Start 14-day free trial ></button>
+                    <button class="ripple-button secondary" id="see-what-we-do-btn">See what we do</button>
+                </div>
+            </div>
+            <!-- Moved dynamic-panels outside hero-content but still inside homepage-hero -->
+            <div class="dynamic-panels">
+                <div class="panel expenses-panel">
+                    <h3>Expenses</h3>
+                    <p class="value">$56.2K</p>
+                    <div class="chart-circle"></div>
+                    <ul class="expense-list">
+                        <li>Insurance</li>
+                        <li>Wages</li>
+                        <li>Rent</li>
+                        <li>Legal Expenses</li>
+                        <li>Other</li>
+                    </ul>
+                </div>
+                <div class="panel total-income-panel">
+                    <h3>Total Income <span class="income-increase">↑ 36.5%</span></h3>
+                    <p class="value">$426.8K total last year</p>
+                    <div class="bar-chart"></div>
+                </div>
+                <div class="panel cash-panel">
+                    <h3>Cash <span class="cash-increase">↑ 202.9%</span></h3>
+                    <p class="value">$288,721</p>
+                    <p class="sub-value">$95,319</p>
+                </div>
+                <div class="panel business-report-panel">
+                    <h3>Edge Design Studio</h3>
+                    <p>Business overview report</p>
+                    <p>August 2024</p>
+                    <div class="org-logo">ORG LOGO</div>
+                    <div class="entity-logo">ENTITY LOGO</div>
+                </div>
+                <div class="panel send-to-panel">
+                    <h3>Send to</h3>
+                    <ul>
+                        <li>📃 PDF</li>
+                        <li>💬 WhatsApp</li>
+                        <li>📝 Word</li>
+                        <li>💬 Slack</li>
+                        <li>📈 Excel</li>
+                        <li>👥 Teams</li>
+                        <li>📤 Email</li>
+                        <li>🔗 Shared URL</li>
+                    </ul>
+                </div>
+                 <div class="panel invoices-panel">
+                    <h3>Invoices</h3>
+                    <p class="today-value">Today $3,296</p>
+                    <p class="next-days-value">Next 8-30 days $100,548</p>
+                    <p class="invoice-count">3 invoices</p>
+                    <div class="invoice-list">
+                        <div class="invoice-item">
+                            <p>Cinderella</p>
+                            <p>Amount: $1200</p>
+                        </div>
+                        <div class="invoice-item">
+                            <p>Julia Hopp</p>
+                            <p>Amount: $3000</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel cash-flow-panel">
+                    <h3>Cash runway</h3>
+                    <p class="cash-months">6 months</p>
+                    <h3 class="overdue-value">Overdue $1,498</h3>
+                    <p class="overdue-invoice">1 invoice</p>
+                </div>
+                <div class="panel financial-score-panel">
+                    <p class="financial-score">90% Financial Health Score ❤️</p>
+                </div>
+                <div class="panel integrations-panel">
+                    <h3>Integrations</h3>
+                    <div class="integration-logos">
+                        <img width="30px" height="30px"src="https://w7.pngwing.com/pngs/10/113/png-transparent-django-web-development-web-framework-python-software-framework-django-text-trademark-logo-thumbnail.png" alt="QuickBooks Logo">
+                        <img width="30px" height="30px" src="https://w7.pngwing.com/pngs/905/976/png-transparent-xero-accounting-software-accountant-computer-software-business-blue-text-people-thumbnail.png" alt="Xero Logo">
+                        <img width="40px" height="20px" src="https://upload.wikimedia.org/wikipedia/commons/b/b3/Sage_logo.png" alt="Sage Logo">
+                    </div>
+                </div>
+                 <div class="panel branch-panel">
+                    <h3>Branches</h3>
+                    <div class="branch-buttons">
+                        <button class="btn small-btn">US Branch</button>
+                        <button class="btn small-btn">AU Branch</button>
+                    </div>
+                    <div class="sub-branches">
+                        <button class="btn small-btn">Texas</button>
+                        <button class="btn small-btn">California</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="theme-toggle">
+            <span class="theme-icon">🌙</span>
+            <div class="toggle-switch" id="theme-switch" data-on="false">
+                <div class="toggle-circle"></div>
+            </div>
+        </div>
+
+        <!-- Customer Section -->
+        <section id="customers" class="customer-section scroll-animate">
+            <h2>Trusted by Leading Companies</h2>
+            <div class="customer-logo-grid">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/49/Brex_Inc._Corporate_Logo.png/1200px-Brex_Inc._Corporate_Logo.png?20201014151914" alt="Brex Logo" class="customer-logo">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Supercell_games.svg/640px-Supercell_games.svg.png" alt="Supercell Logo" class="customer-logo">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Runway_Logo.png/640px-Runway_Logo.png" alt="Runway Logo" class="customer-logo">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Retool_logo.svg/640px-Retool_logo.svg.png" alt="Retool Logo" class="customer-logo">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/OpenAI_Logo.svg/2560px-OpenAI_Logo.svg.png" alt="OpenAI Logo" class="customer-logo">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Paycash_app_icon.svg/640px-Paycash_app_icon.svg.png" alt="Cash App Logo" class="customer-logo">
+            </div>
+            <button class="ripple-button" id="meet-customers-btn">Meet our customers ></button>
+        </section>
+
+        <!-- Features/Services Section -->
+        <section id="features" class="features-services-section scroll-animate">
+            <h2>Unparalleled BSS/OSS Capabilities</h2>
+            <div class="features-tabs">
+                <button class="tab-button active" data-tab="billing">Billing</button>
+                <button class="tab-button" data-tab="charging">Charging</button>
+                <button class="tab-button" data-tab="catalog">Catalog</button>
+                <button class="tab-button" data-tab="events">Events</button>
+            </div>
+
+            <div id="billing" class="tab-content active">
+                <div class="content-left">
+                    <h3>Real-Time Convergent Billing</h3>
+                    <p>Instantaneous, accurate billing across all services and payment methods. Experience seamless financial operations with our cutting-edge system.</p>
+                </div>
+                <div class="content-right">
+                    <img src="https://adniasolutions.com/wp-content/uploads/2017/05/Account-Payable-Dashboard-1024x780.png" alt="Billing Dashboard Mockup">
+                    <div class="billing-stats">
+                        <div class="stat-item">
+                            <p>Estimated invoices</p>
+                            <p class="stat-value">112 355</p>
+                        </div>
+                        <div class="stat-item">
+                            <p>Estimated duration</p>
+                            <p class="stat-value">45 MIN</p>
+                        </div>
+                        <div class="stat-item">
+                            <p>Current period end</p>
+                            <p class="stat-value">17 DAYS</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="charging" class="tab-content">
+                 <div class="content-left">
+                    <h3>Online Charging System</h3>
+                    <p>AI-powered insights that predict customer needs and drive personalized experiences. Optimize your service delivery and boost customer satisfaction.</p>
+                </div>
+                <div class="content-right">
+                     <img width="500px" height="380px" src="https://images01.nicepagecdn.com/page/90/66/website-mockup-90665.jpg" alt="Online Charging System Mockup">
+                      <p class="price-display">€0.00<sub>/min</sub></p>
+                      <div class="phone-call-mockup">
+                          <p>+1 [415] 678-2345</p>
+                          <p>Calling</p>
+                      </div>
+                </div>
+            </div>
+
+            <div id="catalog" class="tab-content">
+                <div class="content-left">
+                    <h3>Product Catalog</h3>
+                    <p>Intuitive tools that empower customers to manage their accounts with ease, freeing up your team. Simplify product offerings and enhance user control.</p>
+                </div>
+                <div class="content-right">
+                    
+                    <div class="product-item">
+                        <img width="50px" height="50px" src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Apple_logo_black.svg/640px-Apple_logo_black.svg.png" alt="Apple Logo">
+                        <img width="50px" height="50px" src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/74/Spotify_App_Logo.svg/640px-Spotify_App_Logo.svg.png" alt="Spotify Logo">
+                        <h4>TOTAL UNLIMITED</h4>
+                        <p>Unlimited minutes</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="events" class="tab-content">
+                <div class="content-left">
+                    <h3>Event Management</h3>
+                    <p>Streamline your event planning and execution with comprehensive management tools. Ensure every event is a success, from registration to post-event analysis.</p>
+                </div>
+                <div class="content-right">
+                    <img src="https://aaft.com/blog/wp-content/uploads/2025/01/freepik__the-style-is-candid-image-photography-with-natural__64007-1024x701.png" alt="Event Management Mockup">
+                    <p style="color: var(--text-color);">Event details and calendar view will go here.</p>
+                </div>
+            </div>
+
+            <div class="feature-nav-buttons">
+                <button class="feature-button">Products +</button>
+                <button class="feature-button">Solutions +</button>
+                <button class="feature-button">Resources +</button>
+                <button class="feature-button">Services +</button>
+                <button class="ripple-button" id="book-meeting-btn">Book a meeting</button>
+            </div>
+        </section>
+
+        <!-- Carousel Section -->
+        <section id="carousel-section" class="carousel-section scroll-animate">
+            <h2>Discover Our Latest Collections</h2>
+            <div class="carousel-wrapper">
+                <div class="carousel-container" id="product-carousel">
+                    <div class="carousel-item">
+                        <p class="new-tag">NEW</p>
+                        <img width="370px" height="185px" src="https://www07.abb.com/images/librariesprovider89/default-album/irb-1090-education-robot.jpg?sfvrsn=e89c190b_1" alt="Product Set 1">
+                        <button class="add-to-bag">ADD TO BAG +</button>
+                    </div>
+                    <div class="carousel-item">
+                        <p class="new-tag">NEW</p>
+                        <img src="https://www07.abb.com/images/librariesprovider89/default-album/irb-6650s-(390x195).jpg?sfvrsn=deb0609_1&CropWidth=370&CropHeight=185&Quality=High&CropX=0&CropY=0&Width=370&Height=185&Method=CropToFixedAreaCropToFixedAreaArguments&Key=4544919dff806c77c1f5dd2f939579b5" alt="Product Set 2">
+                        <button class="add-to-bag">ADD TO BAG +</button>
+                    </div>
+                    <div class="carousel-item">
+                        <p class="new-tag">NEW</p>
+                        <img width="370px" height="185px" src="https://www07.abb.com/images/librariesprovider89/default-album/irb-7720.jpg?Culture=en&sfvrsn=5020400c_1&CropWidth=780&CropHeight=390&Quality=High&CropX=0&CropY=0&Width=192&Height=96&Method=CropToFixedAreaCropToFixedAreaArguments&Key=0bca3e68b8481cbd10c0693f6466a963" alt="Product Set 3">
+                        <button class="add-to-bag">ADD TO BAG +</button>
+                    </div>
+                    <div class="carousel-item">
+                        <p class="new-tag">NEW</p>
+                        <img width="370px" height="185px" src="https://www07.abb.com/images/librariesprovider89/default-album/irb-1090-education-robot.jpg?sfvrsn=e89c190b_1" alt="Product Set 1">
+                        <button class="add-to-bag">ADD TO BAG +</button>
+                    </div>
+                </div>
+            </div>
+            <div class="carousel-nav">
+                <button id="prev-carousel-btn">←</button>
+                <button id="next-carousel-btn">→</button>
+            </div>
+        </section>
+
+        <!-- Brand Kits Card (Your existing code) -->
+        <div class="brand-kits-card scroll-animate">
+            <div class="brand-kits-content">
+                <h2 class="brand-kits-title">Brand Kits</h2>
+                <div class="brand-kit-list">
+                    <div class="brand-kit">
+                        <div class="checkbox">
+                            <span class="checkmark">✓</span>
+                        </div>
+                        <div class="color-dots">
+                            <span class="dot green"></span>
+                            <span class="dot white"></span>
+                        </div>
+                        <span class="brand-name">ECorp</span>
+                        <span class="settings-icon">⚙</span>
+                    </div>
+                    <div class="brand-kit">
+                        <div class="checkbox">
+                            <span class="checkmark">✓</span>
+                        </div>
+                        <div class="color-dots">
+                            <span class="dot yellow"></span>
+                            <span class="dot white"></span>
+                        </div>
+                        <span class="brand-name">ICorp</span>
+                        <span class="settings-icon">⚙</span>
+                    </div>
+                    <div class="brand-kit selected">
+                        <div class="checkbox">
+                            <span class="checkmark">✓</span>
+                        </div>
+                        <div class="color-dots">
+                            <span class="dot red"></span>
+                            <span class="dot white"></span>
+                        </div>
+                        <span class="brand-name">The Agency</span>
+                        <span class="settings-icon">⚙</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Section (Your existing code) -->
+        <div class="stats-section scroll-animate">
+            <!-- Carbon Footprint Column -->
+            <div class="stat-column">
+                <div class="stat-header">Managed portfolio carbon footprint</div>
+                <div class="stat-unit">tCO<sub>2</sub>e</div>
+                <div class="stat-value">45,048</div>
+                <div class="stat-change increase">
+                    <span>↑</span>
+                    <span>16%</span>
+                    <span style="color: var(--text-secondary)">from 2019</span>
+                </div>
+                <div class="year-progress">
+                    <div class="year-row">
+                        <div class="year-label">2022</div>
+                        <div class="progress-container">
+                            <div class="progress-bar" style="width: 75%"></div>
+                        </div>
+                        <div class="year-value">45,048</div>
+                    </div>
+                    <div class="year-row">
+                        <div class="year-label">2021</div>
+                        <div class="progress-container">
+                            <div class="progress-bar" style="width: 25%"></div>
+                        </div>
+                        <div class="year-value">14,111</div>
+                    </div>
+                    <div class="year-row">
+                        <div class="year-label">2020</div>
+                        <div class="progress-container">
+                            <div class="progress-bar" style="width: 50%"></div>
+                        </div>
+                        <div class="year-value">32,813</div>
+                    </div>
+                    <div class="year-row">
+                        <div class="year-label">2019</div>
+                        <div class="progress-container">
+                            <div class="progress-bar" style="width: 60%"></div>
+                        </div>
+                        <div class="year-value">38,673</div>
+                    </div>
+                </div>
+                <div class="stat-footer">
+                    <button class="download-btn" id="full-breakdown-btn">
+                        See full breakdown of carbon footprint
+                        <span class="download-icon">→</span>
+                    </button>
+                </div>
+            </div>
+            <!-- Energy Intensity Column -->
+            <div class="stat-column">
+                <div class="stat-header">Managed portfolio energy intensity</div>
+                <div class="stat-unit">kWh/m<sup>2</sup></div>
+                <div class="stat-value">123</div>
+                <div class="stat-change decrease">
+                    <span>↓</span>
+                    <span>22%</span>
+                    <span style="color: var(--text-secondary)">from 2019</span>
+                </div>
+                <div class="year-progress">
+                    <div class="year-row">
+                        <div class="year-label">2022</div>
+                        <div class="progress-container">
+                            <div class="progress-bar" style="width: 78%"></div>
+                        </div>
+                        <div class="year-value">123</div>
+                    </div>
+                    <div class="year-row">
+                        <div class="year-label">2021</div>
+                        <div class="progress-container">
+                            <div class="progress-bar" style="width: 81%"></div>
+                        </div>
+                        <div class="year-value">128</div>
+                    </div>
+                    <div class="year-row">
+                        <div class="year-label">2020</div>
+                        <div class="progress-container">
+                            <div class="progress-bar" style="width: 86%"></div>
+                        </div>
+                        <div class="year-value">135</div>
+                    </div>
+                    <div class="year-row">
+                        <div class="year-label">2019</div>
+                        <div class="progress-container">
+                            <div class="progress-bar" style="width: 100%"></div>
+                        </div>
+                        <div class="year-value">157</div>
+                    </div>
+                </div>
+                <div class="stat-footer">
+                    <button class="download-btn" id="download-energy-btn">
+                        Download the data
+                        <span class="download-icon">↓</span>
+                    </button>
+                </div>
+            </div>
+            <!-- Energy Consumption Column -->
+            <div class="stat-column">
+                <div class="stat-header">Managed portfolio energy consumption</div>
+                <div class="stat-unit">kWh</div>
+                <div class="stat-value">47,790,662</div>
+                <div class="stat-change decrease">
+                    <span>↓</span>
+                    <span>27%</span>
+                    <span style="color: var(--text-secondary)">from 2019</span>
+                </div>
+                <div class="year-progress">
+                    <div class="year-row">
+                        <div class="year-label">2022</div>
+                        <div class="progress-container">
+                            <div class="progress-bar" style="width: 73%"></div>
+                        </div>
+                        <div class="year-value">47,790,662</div>
+                    </div>
+                    <div class="year-row">
+                        <div class="year-label">2021</div>
+                        <div class="progress-container">
+                            <div class="progress-bar" style="width: 76%"></div>
+                        </div>
+                        <div class="year-value">49,324,077</div>
+                    </div>
+                    <div class="year-row">
+                        <div class="year-label">2020</div>
+                        <div class="progress-container">
+                            <div class="progress-bar" style="width: 75%"></div>
+                        </div>
+                        <div class="year-value">48,784,205</div>
+                    </div>
+                    <div class="year-row">
+                        <div class="year-label">2019</div>
+                        <div class="progress-container">
+                            <div class="progress-bar" style="width: 100%"></div>
+                        </div>
+                        <div class="year-value">65,198,706</div>
+                    </div>
+                </div>
+                <div class="stat-footer">
+                    <button class="download-btn" id="download-consumption-btn">
+                        Download the data
+                        <span class="download-icon">↓</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Carbon Emissions Chart (Your existing code) -->
+        <div class="chart-section scroll-animate">
+            <div class="filter-section">
+                <div class="filter-group">
+                    <div class="filter-label">Filter by</div>
+                    <div class="filter-options">
+                        <div class="filter-label">Type</div>
+                        <button class="filter-btn" id="refurbishment-btn">Refurbishment</button>
+                        <button class="filter-btn" id="new-build-btn">New build</button>
+                        <button class="filter-btn active" id="all-filter-btn">All</button>
+                    </div>
+                </div>
+                <div class="filter-group">
+                    <div class="filter-options">
+                        <div class="filter-label">Status</div>
+                        <button class="filter-btn active" id="complete-status-btn">Complete</button>
+                        <button class="filter-btn" id="estimate-status-btn">Estimate</button>
+                    </div>
+                </div>
+            </div>
+            <div class="chart-header">
+                <div class="chart-keys">
+                    <div class="filter-label">Key</div>
+                    <div class="key-item">
+                        <span class="key-line dashed"></span>
+                        <span>500 kgCO<sub>2</sub>e/m<sup>2</sup> - Embodied Carbon Target 2030</span>
+                    </div>
+                    <div class="key-item">
+                        <span class="key-line solid"></span>
+                        <span>600 kgCO<sub>2</sub>e/m<sup>2</sup> - Embodied Carbon Target 2025</span>
+                    </div>
+                </div>
+                <div>
+                    <h2 class="chart-title">EMBODIED CARBON EMISSIONS</h2>
+                    <div class="chart-subtitle">Intensity measured by kgCO<sub>2</sub>e/m<sup>2</sup></div>
+                    <button class="download-btn" id="download-chart-data-btn">
+                        Download the data
+                        <span class="download-icon">↓</span>
+                    </button>
+                </div>
+            </div>
+            <div class="chart-container">
+                <div class="y-axis">
+                    <div class="y-axis-label">1200</div>
+                    <div class="y-axis-label">1000</div>
+                    <div class="y-axis-label">800</div>
+                    <div class="y-axis-label">600</div>
+                    <div class="y-axis-label">400</div>
+                    <div class="y-axis-label">200</div>
+                    <div class="y-axis-label">0</div>
+                </div>
+                <div class="chart-grid">
+                    <div class="chart-bar" style="height: 46%"><div class="bar-value">549</div></div>
+                    <div class="chart-bar" style="height: 23%"><div class="bar-value">278</div></div>
+                    <div class="chart-bar" style="height: 73%"><div class="bar-value">875</div></div>
+                    <div class="chart-bar" style="height: 51%"><div class="bar-value">617</div></div>
+                    <div class="chart-bar" style="height: 42%"><div class="bar-value">506</div></div>
+                    <div class="chart-bar" style="height: 3%"><div class="bar-value">36</div></div>
+                    <div class="chart-bar" style="height: 15%"><div class="bar-value">185</div></div>
+                    <div class="chart-bar" style="height: 16%"><div class="bar-value">191</div></div>
+                    <div class="chart-bar" style="height: 10%"><div class="bar-value">122</div></div>
+                    <div class="chart-bar" style="height: 46%"><div class="bar-value">550</div></div>
+                    <div class="chart-bar" style="height: 73%"><div class="bar-value">881</div></div>
+                    <div class="chart-bar" style="height: 45%"><div class="bar-value">539</div></div>
+                    <div class="chart-bar" style="height: 22%"><div class="bar-value">269</div></div>
+                    <div class="chart-bar" style="height: 2%"><div class="bar-value">29</div></div>
+                    <div class="chart-bar" style="height: 7%"><div class="bar-value">82</div></div>
+                    <div class="chart-bar" style="height: 4%"><div class="bar-value">44</div></div>
+                    <div class="chart-bar" style="height: 9%"><div class="bar-value">109</div></div>
+                    <div class="chart-bar" style="height: 9%"><div class="bar-value">106</div></div>
+                    <div class="chart-bar" style="height: 51%"><div class="bar-value">607</div></div>
+                    <div class="chart-bar" style="height: 44%"><div class="bar-value">528</div></div>
+                </div>
+            </div>
+            </div>
+        </section>
+
+        <!-- Parallax Section -->
+        <section class="parallax-section scroll-animate">
+            <div class="parallax-image"></div>
+            <div class="parallax-content">
+                <h2 class="connection-heading">Connection</h2>
+                <p class="share-text">Share quality time. <br>And space.</p>
+                <div class="engaging-way-text">
+                    <h3>A more engaging way to get together.</h3>
+                    <p>Apple Vision Pro makes it easy to collaborate and connect wherever you are. You can see FaceTime participants in life-size video tiles, or you can choose to use your spatial Persona and feel like you are sharing the same space with others. And use SharePlay to watch, listen, and play together with your favorite people.</p>
+                    <button class="ripple-button" id="learn-more-connection-btn">Learn more about connection</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Countdown Section -->
+        <section id="countdown" class="countdown-section scroll-animate">
+            <h2>Next Event in:</h2>
+            <div class="countdown-timer">
+                <div class="countdown-item">
+                    <span class="countdown-value" id="days">00</span>
+                    <span class="countdown-label">Days</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-value" id="hours">00</span>
+                    <span class="countdown-label">Hours</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-value" id="minutes">00</span>
+                    <span class="countdown-label">Minutes</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-value" id="seconds">00</span>
+                    <span class="countdown-label">Seconds</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Us Section -->
+        <section id="contact-us" class="contact-us-section scroll-animate">
+            <h2>Get in Touch</h2>
+            <p>Have questions or want to learn more? Send us a message!</p>
+            <form class="contact-form">
+                <input type="text" placeholder="Your Name" required>
+                <input type="email" placeholder="Your Email" required>
+                <textarea placeholder="Your Message" required></textarea>
+                <button type="submit" id="send-message-btn">Send Message</button>
+            </form>
+        </section>
+
+    
+    <script>
+        // Loader Animation
+        const loader = document.getElementById('loader');
+        window.addEventListener('load', () => {
+            // Simulate a minimum loading time if content loads too fast
+            setTimeout(() => {
+                loader.classList.add('hidden');
+            }, 500); // Minimum 0.5 second display
+        });
+
+        // Theme toggle
+        const themeSwitch = document.getElementById('theme-switch');
+        const themeIcon = document.querySelector('.theme-icon');
+        const applyTheme = (isLight) => {
+            document.documentElement.setAttribute('data-theme', isLight ? 'light' : 'dark');
+            themeIcon.textContent = isLight ? '☀️' : '🌙';
+            themeSwitch.setAttribute('data-on', isLight);
+            localStorage.setItem('theme-preference', isLight ? 'light' : 'dark');
+        };
+
+        // Initialize theme from localStorage
+        const savedThemePreference = localStorage.getItem('theme-preference');
+        if (savedThemePreference) {
+            applyTheme(savedThemePreference === 'light');
+        } else {
+            // Default to dark theme if no preference is saved
+            applyTheme(false);
+        }
+
+        themeSwitch.addEventListener('click', function() {
+            const isOn = this.getAttribute('data-on') === 'true';
+            applyTheme(!isOn);
+        });
+
+        // Mobile Navbar Toggle
+        const mobileMenu = document.getElementById('mobile-menu');
+        const navbarLinks = document.getElementById('navbar-links');
+        mobileMenu.addEventListener('click', () => {
+            navbarLinks.classList.toggle('active');
+        });
+        // Close mobile menu when a link is clicked
+        navbarLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                navbarLinks.classList.remove('active');
+            });
+        });
+
+
+        // Brand kit selection
+        document.querySelectorAll('.brand-kit').forEach(kit => {
+            kit.addEventListener('click', function() {
+                document.querySelectorAll('.brand-kit').forEach(k => k.classList.remove('selected'));
+                this.classList.add('selected');
+                console.log('Brand Kit selected:', this.querySelector('.brand-name').textContent);
+            });
+        });
+
+        // Filter buttons toggle (for Carbon Emissions Chart)
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const parentFilterGroup = this.closest('.filter-group');
+                if (parentFilterGroup) {
+                    const siblings = Array.from(parentFilterGroup.querySelectorAll('.filter-btn'));
+                    siblings.forEach(sib => sib.classList.remove('active'));
+                }
+                this.classList.add('active');
+                console.log('Filter button clicked:', this.textContent);
+            });
+        });
+
+        // Ripple effect on background (Only apply to background, not interactive elements)
+        const homepageBg = document.getElementById('homepage-bg');
+        homepageBg.addEventListener('click', function(e) {
+            // Check if the click target or any of its parents is an interactive element
+            if (e.target.closest('button, a, .brand-kit, .filter-btn, .download-btn, .toggle-switch, .theme-toggle, .ripple-button, .panel, .add-to-bag, .carousel-nav button')) {
+                return; // Do not create ripple if clicked on an interactive element
+            }
+            const ripple = document.createElement('span');
+            ripple.className = 'bg-ripple';
+            const rect = homepageBg.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height) * 0.8;
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = (e.clientX - rect.left - size/2) + 'px';
+            ripple.style.top = (e.clientY - rect.top - size/2) + 'px';
+            homepageBg.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 800);
+        });
+
+        // General button click handlers (for demonstration)
+        document.getElementById('start-trial-btn').addEventListener('click', () => {
+            console.log('Start 14-day free trial button clicked!');
+            // Add actual trial start logic here
+        });
+
+        document.getElementById('see-what-we-do-btn').addEventListener('click', () => {
+            console.log('See what we do button clicked!');
+            // Add actual navigation/display logic here
+        });
+
+        document.getElementById('meet-customers-btn').addEventListener('click', () => {
+            console.log('Meet our customers button clicked!');
+            // Add actual customer page navigation here
+        });
+
+        document.querySelectorAll('.add-to-bag').forEach(button => {
+            button.addEventListener('click', () => {
+                const itemTitle = button.closest('.carousel-item').querySelector('img').alt; // Get alt text for context
+                console.log(`'ADD TO BAG +' button clicked for ${itemTitle}!`);
+                // Add actual add to bag logic here
+            });
+        });
+
+        document.getElementById('prev-carousel-btn').addEventListener('click', () => {
+            console.log('Previous carousel button clicked!');
+        });
+
+        document.getElementById('next-carousel-btn').addEventListener('click', () => {
+            console.log('Next carousel button clicked!');
+        });
+
+        document.getElementById('full-breakdown-btn').addEventListener('click', () => {
+            console.log('See full breakdown of carbon footprint button clicked!');
+            // Add data download/display logic here
+        });
+
+        document.getElementById('download-energy-btn').addEventListener('click', () => {
+            console.log('Download energy data button clicked!');
+            // Add data download logic here
+        });
+
+        document.getElementById('download-consumption-btn').addEventListener('click', () => {
+            console.log('Download consumption data button clicked!');
+            // Add data download logic here
+        });
+
+        document.getElementById('download-chart-data-btn').addEventListener('click', () => {
+            console.log('Download chart data button clicked!');
+            // Add chart data download logic here
+        });
+
+        document.getElementById('learn-more-connection-btn').addEventListener('click', () => {
+            console.log('Learn more about connection button clicked!');
+            // Add navigation to connection details page here
+        });
+
+        document.getElementById('send-message-btn').addEventListener('click', (e) => {
+            e.preventDefault(); // Prevent default form submission for demonstration
+            const form = e.target.closest('form');
+            const name = form.querySelector('input[type="text"]').value;
+            const email = form.querySelector('input[type="email"]').value;
+            const message = form.querySelector('textarea').value;
+            console.log('Send Message button clicked!');
+            console.log('Name:', name);
+            console.log('Email:', email);
+            console.log('Message:', message);
+            // Add actual form submission logic here (e.g., fetch API call)
+            alert('Message sent successfully! (Check console for details)'); // Using alert for demo purposes
+        });
+
+
+        // Scroll-triggered animations
+        const scrollElements = document.querySelectorAll('.scroll-animate');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target); // Stop observing once visible
+                }
+            });
+        }, { threshold: 0.1 });
+        scrollElements.forEach(el => observer.observe(el));
+
+
+        // HOMEPAGE DYNAMIC PANEL HOVER ANIMATION
+        const homepageHero = document.getElementById('homepage-hero');
+
+        // Only apply hover effect on larger screens
+        if (window.innerWidth > 768) {
+            homepageHero.addEventListener('mouseenter', () => {
+                homepageHero.classList.add('panels-active');
+            });
+
+            homepageHero.addEventListener('mouseleave', () => {
+                homepageHero.classList.remove('panels-active');
+            });
+        } else {
+            // For smaller screens, ensure panels are visible by default (handled by CSS media query)
+            homepageHero.classList.add('panels-active');
+        }
+
+        // Features/Services Tabs functionality
+        const tabButtons = document.querySelectorAll('.features-tabs .tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+
+                button.classList.add('active');
+                const targetTabId = button.dataset.tab;
+                const targetContent = document.getElementById(targetTabId);
+                if (targetContent) {
+                    targetContent.classList.add('active');
+                }
+                console.log(`Tab changed to: ${button.textContent}`);
+            });
+        });
+
+
+        // Carousel functionality (for product carousel)
+        const productCarousel = document.getElementById('product-carousel');
+        const prevCarouselBtn = document.getElementById('prev-carousel-btn');
+        const nextCarouselBtn = document.getElementById('next-carousel-btn');
+        let carouselIndex = 0;
+
+        function updateCarousel() {
+            // Assuming carousel items have roughly equal width
+            const itemWidth = productCarousel.children[0].offsetWidth + (parseFloat(getComputedStyle(productCarousel.children[0]).marginLeft) * 2);
+            productCarousel.style.transform = `translateX(-${carouselIndex * itemWidth}px)`;
+        }
+
+        nextCarouselBtn.addEventListener('click', () => {
+            if (carouselIndex < productCarousel.children.length - 1) {
+                carouselIndex++;
+            } else {
+                carouselIndex = 0; // Loop back to start
+            }
+            updateCarousel();
+        });
+
+        prevCarouselBtn.addEventListener('click', () => {
+            if (carouselIndex > 0) {
+                carouselIndex--;
+            } else {
+                carouselIndex = productCarousel.children.length - 1; // Loop to end
+            }
+            updateCarousel();
+        });
+
+        // Initial update and handle resize
+        window.addEventListener('resize', updateCarousel);
+        updateCarousel(); // Call on load to set initial position
+
+
+        // Countdown Timer Functionality
+        const countdownDate = new Date("December 31, 2025 23:59:59").getTime(); // Set your target date
+
+        const x = setInterval(function() {
+            const now = new Date().getTime();
+            const distance = countdownDate - now;
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById("days").innerHTML = String(days).padStart(2, '0');
+            document.getElementById("hours").innerHTML = String(hours).padStart(2, '0');
+            document.getElementById("minutes").innerHTML = String(minutes).padStart(2, '0');
+            document.getElementById("seconds").innerHTML = String(seconds).padStart(2, '0');
+
+            if (distance < 0) {
+                clearInterval(x);
+                document.getElementById("countdown").innerHTML = "<h2>EVENT HAS STARTED!</h2>";
+                document.querySelector('.countdown-timer').style.display = 'none'; // Hide the timer
+            }
+        }, 1000);
+    </script>
+</body>
+</html>
