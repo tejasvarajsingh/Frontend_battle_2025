@@ -1946,10 +1946,10 @@
         // Loader Animation
         const loader = document.getElementById('loader');
         window.addEventListener('load', () => {
-            // Simulate a minimum loading time if content loads too fast
+            
             setTimeout(() => {
                 loader.classList.add('hidden');
-            }, 500); // Minimum 0.5 second display
+            }, 2000); 
         });
 
         // Theme toggle
@@ -2012,12 +2012,12 @@
             });
         });
 
-        // Ripple effect on background (Only apply to background, not interactive elements)
+        
         const homepageBg = document.getElementById('homepage-bg');
         homepageBg.addEventListener('click', function(e) {
-            // Check if the click target or any of its parents is an interactive element
+            
             if (e.target.closest('button, a, .brand-kit, .filter-btn, .download-btn, .toggle-switch, .theme-toggle, .ripple-button, .panel, .add-to-bag, .carousel-nav button')) {
-                return; // Do not create ripple if clicked on an interactive element
+                return; 
             }
             const ripple = document.createElement('span');
             ripple.className = 'bg-ripple';
@@ -2168,7 +2168,7 @@
             if (carouselIndex < productCarousel.children.length - 1) {
                 carouselIndex++;
             } else {
-                carouselIndex = 0; // Loop back to start
+                carouselIndex = 0; 
             }
             updateCarousel();
         });
@@ -2177,18 +2177,18 @@
             if (carouselIndex > 0) {
                 carouselIndex--;
             } else {
-                carouselIndex = productCarousel.children.length - 1; // Loop to end
+                carouselIndex = productCarousel.children.length - 1; 
             }
             updateCarousel();
         });
 
         // Initial update and handle resize
         window.addEventListener('resize', updateCarousel);
-        updateCarousel(); // Call on load to set initial position
+        updateCarousel(); 
 
 
-        // Countdown Timer Functionality
-        const countdownDate = new Date("December 31, 2025 23:59:59").getTime(); // Set your target date
+        
+        const countdownDate = new Date("December 31, 2025 23:59:59").getTime(); 
 
         const x = setInterval(function() {
             const now = new Date().getTime();
