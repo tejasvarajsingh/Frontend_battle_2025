@@ -14,7 +14,7 @@ I’ve put great effort into building this webpage and aimed to replicate the or
   
 3.	A **“Contact Us”** section at the bottom of the page.
 
-Note: Some buttons or links might not work as this is only the Front End, but you will get all the info of clicking the button on the console.
+**Note:** Some buttons or links might not work as this is only the Front End, but you will get all the info of clicking the button and selecting options in the card on the console.
 
 I hope you find this project both useful and enjoyable to explore!
 Thank You!
