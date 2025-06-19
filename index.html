@@ -45,75 +45,75 @@
             --carousel-bg-dark: linear-gradient(135deg, #1e1e1e, #262626);
         }
         [data-theme="light"] {
-            --dark-bg: #ffffff; /* Brighter background for light mode */
-            --card-bg: #f8f9fa; /* Lighter card background */
-            --item-bg: #e9ecef; /* Even lighter item background */
-            --text-color: #212529; /* Darker text for better contrast */
-            --border-color: #ced4da; /* Lighter border */
-            --text-secondary: #6c757d; /* Slightly darker secondary text */
-            --primary-button-bg: #4c6ef5; /* A more vibrant blue for light theme primary */
+            --dark-bg: #ffffff; 
+            --card-bg: #f8f9fa; 
+            --item-bg: #e9ecef; 
+            --text-color: #212529; 
+            --border-color: #ced4da;
+            --text-secondary: #6c757d; 
+            --primary-button-bg: #4c6ef5; 
             --primary-button-hover: #364fc7;
             --secondary-button-border: #4c6ef5;
             --secondary-button-text: #4c6ef5;
 
 
-            /* Additional variables for hero section in light mode */
-            --hero-video-filter: brightness(0.6); /* Slightly less dark for light theme */
+           
+            --hero-video-filter: brightness(0.6); 
             --hero-overlay-bg: rgba(255, 255, 255, 0.5);
             --panel-bg-light: rgba(255, 255, 255, 0.8);
-            --panel-border-light: rgba(173, 181, 189, 0.7); /* Greyish border */
+            --panel-border-light: rgba(173, 181, 189, 0.7); 
 
-            /* Navbar colors in light mode */
+            
             --navbar-bg: rgba(255, 255, 255, 0.9);
             --navbar-text: #212529;
             --navbar-link-hover: var(--primary-button-bg);
 
-            /* Carousel background in light mode */
-            --carousel-bg-light: linear-gradient(135deg, #e0efff, #ccf0ff); /* Light blue gradient */
-            --carousel-text-light: #212529; /* Dark text for light gradient */
+            
+            --carousel-bg-light: linear-gradient(135deg, #e0efff, #ccf0ff); 
+            --carousel-text-light: #212529; 
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--dark-bg); /* Base background color */
-            /* Subtle grid pattern for dark mode */
+            background-color: var(--dark-bg); 
+            
             background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
                               linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
             
             color: var(--text-color);
             transition: background 0.3s ease, color 0.3s ease;
-            overflow-x: hidden; /* Prevent horizontal scroll from animations */
+            overflow-x: hidden; 
         }
 
         [data-theme="light"] body {
-            background-color: var(--dark-bg); /* This is the light mode --dark-bg which is white */
-            /* Subtle grid pattern for light mode */
+            background-color: var(--dark-bg); 
+            
             background-image: linear-gradient(rgb(163, 3, 158) 1px, transparent 1px),
                              
             
         }
 
-        /* Loader */
+        
         .loader {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: var(--dark-bg); /* Use theme background */
+            background: var(--dark-bg); 
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 9999;
             transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
-            gap: 10px; /* Space between bars */
+            gap: 10px; 
         }
 
         .loader-bar {
             width: 40px;
             height: 10px;
-            background: var(--accent-purple); /* Use accent color */
+            background: var(--accent-purple); 
             border-radius: 5px;
             animation: loaderDance 1.5s infinite ease-in-out;
         }
